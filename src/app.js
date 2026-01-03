@@ -26,6 +26,9 @@ app.use(cors(
     }
 ))
 
+//static assets are gone used by usign static methods here
+app.use(express.static("./Assests"))
+
 
 
 
