@@ -1,0 +1,1 @@
+there are error encountered with .env fils
