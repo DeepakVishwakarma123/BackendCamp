@@ -5,7 +5,7 @@ dotenv.config({path:"./.env"})
 
 
 const port=process.env.PORT
-console.log(process.env.originslist);
+
 
 
 app.listen(port,() => {console.log(`listening on http://localhost:${port}`)})
