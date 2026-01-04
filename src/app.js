@@ -35,8 +35,7 @@ app.use(express.urlencoded(
 }
 ))
 app.use(cors(
-    {
-        // origin:process.env.originslist.split(",")
+    {  
         origin:["http://localhost/5173"],
         methods:["get","post","put","delete","options"],
         credentials:true,
