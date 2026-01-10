@@ -15,6 +15,8 @@ promiseObj.then(
     }
 )
 
+//doubt here
+//can await gives us resovled promise value if it returnign a promise
 
 
 
