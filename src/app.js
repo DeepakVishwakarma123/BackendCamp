@@ -1,21 +1,9 @@
 import express from "express"
 import cors from "cors"
 import dotenv from "dotenv"
-import events from "node:events"
-import fs from "node:fs"
 import { log } from "node:console"
 
-const EventEmitter=events
 
-class logger extends  EventEmitter
-{
-    log(message)
-    {
-        this.emit("message",message)
-    }
-}
-
-let loggerObject=new  logger()
 
 
 
@@ -46,9 +34,9 @@ app.use(cors(
 //static assets are gone used by usign static methods here
 app.use(express.static("./Assests"))
 
+import healthrouter  from "./routes/healthcheck-routes.js"
 
-
-
+app.use("/api/v1/healthcheck",healthrouter)
 
 app.get(
     "/",(req,res) => {
@@ -78,25 +66,6 @@ app.get("/domain",(req,res) => {
     loggerObject.log(message)
 })
 
-
-loggerObject.on(
-    //loggeobject function log message value is get here as that event occurss
-    "message",(messageValue) => {
-        let filepath="./log.txt"
-        console.log("message value passed is hrere",messageValue);
-        fs.appendFileSync(filepath,messageValue)
-        
-    }
-)
-
-function generateMessageLog(req)
-{
-    let url=req.url
-    let Dateobject=new Date()
-    let timewithDate=Dateobject.toLocaleTimeString()
-    let messageLog=`Url is:- ${url} DateTime:- ${timewithDate} \n`
-    return messageLog
-}
 export default app
 
 
