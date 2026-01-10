@@ -1,5 +1,6 @@
 import { Schema } from "mongoose";
 import mongoose  from "mongoose";
+import bcrypt from "bcryptjs"
 
 const userschema=new Schema(
     {
@@ -64,6 +65,23 @@ const userschema=new Schema(
         timestamps:true
     }
 )
+
+//literally it invoke everytime like a when we do any save in db that,s why
+userschema.pre("save",async function (next) {
+    if(this.isModified("password"))
+    {   
+        //bcrypt hash return promise with resulting hash here due to await we get directly resolved value
+        this.password=await bcrypt.hash(this.password,10)  
+        next()
+    }
+    return next()
+})
+
+userschema.methods.passWordVerify=async function(passWord)
+{
+//we have pasword hash in this that,s why we need to take orignal plain password from outside!!!
+return await bcrypt.compare(passWord,this.passWord)
+}
 
 const user=mongoose.model("User",userschema)
 export default user
