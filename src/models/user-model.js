@@ -1,7 +1,13 @@
 import { Schema } from "mongoose";
 import mongoose  from "mongoose";
 import bcrypt from "bcryptjs"
+import jwt from "jsonwebtoken"
+import crypto from "crypto"
+import dotenv from "dotenv"
 
+dotenv.config({
+    path:"./.env"
+})
 const userschema=new Schema(
     {
         avatar:{
@@ -83,5 +89,31 @@ userschema.methods.passWordVerify=async function(passWord)
 return await bcrypt.compare(passWord,this.passWord)
 }
 
+//generate jwt with payload
+userschema.methods.GenerateJWTAccess=function ()
+{
+let AccessToken=jwt.sign({_id:this._id,username:this.username,email:this.email},process.env.ACCESS_TOKEN_SECRET,{expiresIn:process.env.
+ACCESS_TOKEN_EXPIRES})
+return AccessToken
+}
+
+userschema.methods.GenerateJWTRefreshToken=function ()
+{
+    let RefreshToken=jwt.sign({_id:this._id},process.env.REFRESH_TOKEN_SECRET,{expiresIn:process.env.REFRESH_TOKEN_EXPIRES})
+    return RefreshToken
+}
+
+userschema.methods.GenerateTokenWithoutData=function ()
+{
+  return crypto.randomBytes(32).toString("hex")
+}
+
+userschema.methods.hashedWithoutDataToken=function (withoutDataToken)
+{
+    return crypto.createHash("sha256").update(withoutDataToken).digest("hex")
+}
+
 const user=mongoose.model("User",userschema)
 export default user
+
+
