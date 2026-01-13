@@ -5,6 +5,8 @@ import jwt from "jsonwebtoken"
 import crypto from "crypto"
 import dotenv from "dotenv"
 
+
+
 dotenv.config({
     path:"./.env"
 })
@@ -73,14 +75,16 @@ const userschema=new Schema(
 )
 
 //literally it invoke everytime like a when we do any save in db that,s why
-userschema.pre("save",async function (next) {
+userschema.pre("save",async function () {
     if(this.isModified("password"))
     {   
+       
+        
+        
         //bcrypt hash return promise with resulting hash here due to await we get directly resolved value
         this.password=await bcrypt.hash(this.password,10)  
-        next()
+        
     }
-    return next()
 })
 
 userschema.methods.passWordVerify=async function(passWord)
@@ -105,15 +109,15 @@ userschema.methods.GenerateJWTRefreshToken=function ()
 
 userschema.methods.GenerateTokenWithoutData=function ()
 {
-  return crypto.randomBytes(32).toString("hex")
+  let tokenWithoutHash=crypto.randomBytes(32).toString("hex")
+  let tokenExpiry=Date.now()*(20*60*1000) //20minuts
+  let hashedToken=crypto.createHash("sha256").update(tokenWithoutHash).digest("hex")
+  return {tokenWithoutHash,tokenExpiry,hashedToken}
 }
 
-userschema.methods.hashedWithoutDataToken=function (withoutDataToken)
-{
-    return crypto.createHash("sha256").update(withoutDataToken).digest("hex")
-}
 
-const user=mongoose.model("User",userschema)
-export default user
+
+const User=mongoose.model("User",userschema)
+export default User
 
 
