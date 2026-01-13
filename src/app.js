@@ -35,8 +35,10 @@ app.use(cors(
 app.use(express.static("./Assests"))
 
 import healthrouter  from "./routes/healthcheck-routes.js"
+import RegisterRouter from "./routes/register-route.js"
 
 app.use("/api/v1/healthcheck",healthrouter)
+app.use("/api/v1/register",RegisterRouter)
 
 app.get(
     "/",(req,res) => {
