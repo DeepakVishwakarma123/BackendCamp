@@ -10,10 +10,10 @@ import { log } from "console";
 // a custom method in Model is only can availbable to called via document its self
 function tokenGenerate(userDocument)
 {
- let {temporaryToken,tokenExpiry,hashedToken}=userDocument.GenerateTokenWithoutData()
+ let {tokenWithoutHash,tokenExpiry,hashedToken}=userDocument.GenerateTokenWithoutData()
 
  return {
-    temporaryToken,tokenExpiry,hashedToken
+    tokenWithoutHash,tokenExpiry,hashedToken
  }
 }
 
@@ -67,10 +67,10 @@ let registerController=asyncHandler(
 
         // token generations for email verfication goes here
         let AllRequiredTokens=tokenGenerate(createdUser)
-
-        createdUser.emailVefificationToken=AllRequiredTokens.hashedToken
         createdUser.emailVeficationExpiry=AllRequiredTokens.tokenExpiry
-
+        createdUser.emailVefificationToken=AllRequiredTokens.hashedToken
+        console.log(createdUser);
+        
 
         await createdUser.save({validateBeforeSave:false})
      
@@ -85,7 +85,7 @@ let registerController=asyncHandler(
         }
 
         // creating and passing a email verify route here
-        let emailVerfiyUrl=`${req.protocol}://${req.get("host")}/api/v1/verify/${AllRequiredTokens.temporaryToken}`
+        let emailVerfiyUrl=`${req.protocol}://${req.get("host")}/api/v1/verify/${AllRequiredTokens.tokenWithoutHash}/${createdUser._id}`
 
         // generate email 
         let emailContentWithBodyData=emailContentBodyGenWithUrl(emailBodyObject,emailVerfiyUrl)
