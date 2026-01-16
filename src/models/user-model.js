@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
 import crypto from "crypto"
 import dotenv from "dotenv"
+import apiError from "../utils/api-error.js";
 
 
 
@@ -66,7 +67,7 @@ const userschema=new Schema(
             type:String
         },
         emailVeficationExpiry:{
-         type:Date
+         type:Number
         }
     },
     {
@@ -87,12 +88,20 @@ userschema.pre("save",async function () {
     }
 })
 
+
+
 userschema.methods.passWordVerify=async function(passWord)
 {
 //we have pasword hash in this that,s why we need to take orignal plain password from outside!!!
 return await bcrypt.compare(passWord,this.passWord)
 }
 
+userschema.methods.emailVerify=async function (temporaryToken)
+{
+let tokenVerifyOrnot=bcrypt.compare(temporaryToken,this.emailVefificationToken)
+return tokenVerifyOrnot
+
+}
 //generate jwt with payload
 userschema.methods.GenerateJWTAccess=function ()
 {
@@ -110,7 +119,9 @@ userschema.methods.GenerateJWTRefreshToken=function ()
 userschema.methods.GenerateTokenWithoutData=function ()
 {
   let tokenWithoutHash=crypto.randomBytes(32).toString("hex")
-  let tokenExpiry=Date.now()*(20*60*1000) //20minuts
+  console.log("tokenwithout hash values",tokenWithoutHash);
+  
+  let tokenExpiry=Date.now()+(2*60*1000) //3minuts
   let hashedToken=crypto.createHash("sha256").update(tokenWithoutHash).digest("hex")
   return {tokenWithoutHash,tokenExpiry,hashedToken}
 }
