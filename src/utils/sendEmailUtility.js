@@ -33,8 +33,8 @@ let sendEmail=async (options) => {
             host:"sandbox.smtp.mailtrap.io",
             port:"25",
             auth:{
-                user:"69f26512ad1712",
-                pass:"19a3e0b6494d26"
+                user:"dba4c2ce0add4c",
+                pass:"25f523db609b38"
             }
         }
     )
