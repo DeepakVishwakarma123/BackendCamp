@@ -36,9 +36,12 @@ app.use(express.static("./Assests"))
 
 import healthrouter  from "./routes/healthcheck-routes.js"
 import RegisterRouter from "./routes/register-route.js"
+import emailVerifyRouter from "./routes/email-verify-routes.js"
 
 app.use("/api/v1/healthcheck",healthrouter)
 app.use("/api/v1/register",RegisterRouter)
+app.use("/api/v1/verify",emailVerifyRouter)
+
 
 app.get(
     "/",(req,res) => {
