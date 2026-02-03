@@ -37,17 +37,22 @@ app.use(express.static("./Assests"))
 import healthrouter  from "./routes/healthcheck-routes.js"
 import RegisterRouter from "./routes/register-route.js"
 import emailVerifyRouter from "./routes/email-verify-routes.js"
+import testValidateRouter from "./routes/test-validate-route.js"
+import dummyTestRouter from "./routes/dummy-routes..js"
 
 app.use("/api/v1/healthcheck",healthrouter)
 app.use("/api/v1/register",RegisterRouter)
 app.use("/api/v1/verify",emailVerifyRouter)
+app.use("/api/v1/testval",testValidateRouter)
+app.use("/api/v1/dummy",dummyTestRouter)
 
 
 app.get(
     "/",(req,res) => {
         res.send("hello you are hitting cheating /routes")
         let message=generateMessageLog(req)
-        loggerObject.log(message)        
+        loggerObject.log(message)       
+         
     }
 )
 

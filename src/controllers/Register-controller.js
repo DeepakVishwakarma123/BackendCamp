@@ -27,7 +27,7 @@ let registerController=asyncHandler(
         // validate the data before saving operaion in db
         // here we ignore it first as we don,t need it now
         
-        // savin email which not exist single time email get used
+        // saving email which not exist single time email get used
             let existUser=await User.findOne({$or:[
                 {
                     email:email
