@@ -10,4 +10,18 @@ return [
 ]
 }
 
-export default validate
+function loginValidate()
+{
+    return [
+        body('email').
+        trim().
+        notEmpty().
+        withMessage("email is empty").
+        isEmail()
+        .withMessage("email is not valid"),
+        body('password').trim().notEmpty().
+        withMessage("password field can not be empty").escape()
+    ]
+}
+
+export {validate,loginValidate}
