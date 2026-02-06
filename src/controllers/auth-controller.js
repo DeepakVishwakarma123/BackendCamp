@@ -19,7 +19,7 @@ async function (req,res,next)
     {
     let AccessToken=userDocument.GenerateJWTAccess()
     let options={
-        httponly:true,
+        Httponly:true,
         secure:true
     }
     res.cookie("AccessToken",AccessToken,options)
@@ -38,4 +38,29 @@ async function (req,res,next)
 }    
 )
 
-export default loginController
+let logoutController=asyncHandler(
+    async function (req,res,next) {
+        //auth middlware give the object which actually has we need as user document we gone use it
+        let userDocument=req.user 
+        console.log(userDocument)
+        //validation are necessary need here but let's do direc
+    let updatedDoc=await User.findByIdAndUpdate(userDocument._id,{
+            $set:{
+                refreshToken:""
+            }
+        },{
+            new:true
+        })
+         let options={
+        Httponly:true,
+        secure:true
+    }
+        res.clearCookie("AccessToken",options)
+        res.clearCookie("RefreshToken",options)
+        res.status(200).json(new apiResponse(200,"log out succesfully",{
+            data:true
+        }))
+    }
+)
+
+export {loginController,logoutController}
