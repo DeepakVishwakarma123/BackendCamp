@@ -92,8 +92,9 @@ userschema.pre("save",async function () {
 
 userschema.methods.passWordVerify=async function(passWord)
 {
+console.log("passowrd inside value paswof",passWord)
 //we have pasword hash in this that,s why we need to take orignal plain password from outside!!!
-return await bcrypt.compare(passWord,this.passWord)
+return await bcrypt.compare(passWord,this.password)
 }
 
 userschema.methods.emailVerify=async function (temporaryToken)
