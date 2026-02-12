@@ -88,8 +88,6 @@ userschema.pre("save",async function () {
     }
 })
 
-
-
 userschema.methods.passWordVerify=async function(passWord)
 {
 console.log("passowrd inside value paswof",passWord)
