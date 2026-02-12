@@ -1,6 +1,7 @@
 import Mailgen from "mailgen"
 import nodemailer from "nodemailer"
 import dotenv from "dotenv"
+import { promises } from "nodemailer/lib/xoauth2"
 
 dotenv.config(
     {
@@ -52,6 +53,7 @@ let sendEmail=async (options) => {
                          }
         )
         console.log("mail sended succesfully");
+     //   return Promise.resolve("mail sended succesfully")
         
     } catch (error) {
        return Promise.reject("error happend durign mail send utility")
