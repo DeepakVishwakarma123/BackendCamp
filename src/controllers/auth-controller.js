@@ -4,6 +4,8 @@ import apiResponse from "../utils/api-response.js";
 import User from "../models/user-model.js";
 import emailContentBodyGenWithUrl from "../utils/emailContentGenertionFunction.js";
 import sendEmail from "../utils/sendEmailUtility.js";
+import jwt from "jsonwebtoken"
+import { use } from "react";
 
 let loginController=asyncHandler(
 async function (req,res,next)
@@ -85,6 +87,7 @@ let forgotPasswordRequest=asyncHandler(
             let {tokenWithoutHash,tokenExpiry,hashedToken}=UserDoc.GenerateTokenWithoutData()
             UserDoc.forgotPasswordToken=hashedToken
             UserDoc.forgotPasswordExpiry=tokenExpiry
+            await UserDoc.save({validateBeforeSave:false})
             let emailUrl=`${req.protocol}://${req.get("host")}/api/v1/auth/reset-password/${tokenWithoutHash}`
             //email working
             let emailGenContent=emailContentBodyGenWithUrl(
@@ -107,4 +110,93 @@ let forgotPasswordRequest=asyncHandler(
     }
 )
 
-export {loginController,logoutController,getCurrentUser}
+
+let resetPassword=asyncHandler(
+    async function (req) {
+        let resetToken=req.params.resetToken
+        let {newPassword}=req.body
+
+        //token hahsed first
+        let hashedToken=crypto.createHash("sha256").update(resetToken).digest("hex")
+        let userd=await User.findOne({forgotPasswordToken:hashedToken,forgotPasswordExpiry:{
+            $gt:Date.now()
+        }})
+        if(userd)
+        {
+            userd.forgotPasswordToken=""
+            userd.forgotPasswordExpiry=""
+            userd.password=newPassword
+            await userd.save({validateBeforeSave:false})
+            return res.status(200).json(new apiResponse(200,"password reset succesful",{
+                passwordreset:true
+            })) 
+        }
+        throw new apiError(405,"token is invalid")
+    }
+)
+
+let changePassword=asyncHandler(
+    async function (req,res) {
+        let usermiddlware=req.user._id
+        let userDoc=await User.findById({usermiddlware})
+        let {oldPassword,newPassword}=req.body
+
+     let isPasswordValid=UserDoc.passWordVerify(oldPassword)
+     if(!isPasswordValid)
+     {
+        throw new apiError(404,
+            "the entered password is not correct"
+        )
+     }
+
+     UserDoc.password=newPassword
+     await UserDoc.save({validateBeforeSave:false})
+     res.status("200").send("password changed")
+    }
+)
+
+
+let refreshAccessToken=asyncHandler(
+    async function (req,res) {
+        let refreshToken=req.cookies["RefreshToken"]
+
+        try {
+          let decoedToken=jwt.verify(refreshToken,process.env.REFRESH_TOKEN_SECRET)
+          let userDoc=await User.findById(decoedToken._id)
+
+          if(!userDoc)
+          {
+            throw new apiError(404,"unauthorized access")
+          }
+
+          if(refreshToken!==userDoc.refreshToken)
+          {
+            throw new apiError(404,"refresh token is expired")
+          }
+
+          const options={
+            Httponly:true,
+            secure:true
+          }
+
+         let AccessToken=userDoc.GenerateJWTAccess()
+         let refreshTokennew=userDoc.GenerateJWTRefreshToken()
+
+         userDoc.refreshToken=refreshTokennew
+
+        await userDoc.save({validateBeforeSave:false})
+         res.status(200).cookie("AccessToken",AccessToken,options).cookie("RefreshToken",refreshTokennew,options).json(
+            200,"access token and refresh token is generaed",{
+                accesstoken:AccessToken,
+                refreshToken:refreshTokennew
+            }
+         )
+
+        } catch (error) {
+            throw new apiError(405,"refresh token is expired try to login agian")
+        }
+
+        
+    }
+)
+export {loginController,logoutController,getCurrentUser,resetPassword,changePassword}
