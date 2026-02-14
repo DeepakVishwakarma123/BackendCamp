@@ -43,7 +43,7 @@ function userForgotPasswordValidator()
 function userResetPasswordForgotValidator()
 {
     return [
-        body("newPassword").notEmpty("passowrd is required")
+        body("newPassword").notEmpty()
     ]
 }
 
