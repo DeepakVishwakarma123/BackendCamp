@@ -24,4 +24,27 @@ function loginValidate()
     ]
 }
 
-export {validate,loginValidate}
+function passwordChange()
+{  
+    return [
+        body("oldPassword").trim().notEmpty().withMessage("password required").isLength(8).escape(),
+        body("newPassword").trim().notEmpty().isLength(8).escape()
+    ]
+}
+
+function userForgotPasswordValidator()
+{
+    return [
+        body("email").trim().notEmpty().withMessage("email is required").isEmail().withMessage("email should not valid")
+    ]
+}
+
+
+function userResetPasswordForgotValidator()
+{
+    return [
+        body("newPassword").notEmpty("passowrd is required")
+    ]
+}
+
+export {validate,loginValidate,passwordChange,userForgotPasswordValidator,userResetPasswordForgotValidator}
