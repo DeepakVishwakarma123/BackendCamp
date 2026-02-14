@@ -199,4 +199,4 @@ let refreshAccessToken=asyncHandler(
         
     }
 )
-export {loginController,logoutController,getCurrentUser,resetPassword,changePassword}
+export {loginController,logoutController,getCurrentUser,resetPassword,changePassword,refreshAccessToken,forgotPasswordRequest}
