@@ -1,7 +1,7 @@
 import Mailgen from "mailgen"
 import nodemailer from "nodemailer"
 import dotenv from "dotenv"
-import { promises } from "nodemailer/lib/xoauth2"
+
 
 dotenv.config(
     {
