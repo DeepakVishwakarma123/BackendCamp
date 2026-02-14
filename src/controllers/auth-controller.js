@@ -5,7 +5,8 @@ import User from "../models/user-model.js";
 import emailContentBodyGenWithUrl from "../utils/emailContentGenertionFunction.js";
 import sendEmail from "../utils/sendEmailUtility.js";
 import jwt from "jsonwebtoken"
-import { use } from "react";
+import crypto from "crypto"
+
 
 let loginController=asyncHandler(
 async function (req,res,next)
@@ -22,11 +23,15 @@ async function (req,res,next)
     if(passWordValid)
     {
     let AccessToken=userDocument.GenerateJWTAccess()
+    let RefreshToken=userDocument.GenerateJWTRefreshToken()
+    userDocument.refreshToken=RefreshToken
+    await userDocument.save({validateBeforeSave:false})
     let options={
         Httponly:true,
         secure:true
     }
     res.cookie("AccessToken",AccessToken,options)
+    res.cookie("RefreshToken",RefreshToken,options)
     res.status(201).json(
         new apiResponse(201,"access token is generated",{
             data:true
@@ -70,7 +75,7 @@ let logoutController=asyncHandler(
 let getCurrentUser=asyncHandler(
     async function (req,res) {
         let userDoc=req.user
-        let user=await User.findById(userDoc._id).select("-password -refreshToken -forgotPasswordToken -forgotPasswordExpiry -emailVerficationToken -emailVerificationExpiry")
+        let user=await User.findById(userDoc._id).select("-password -refreshToken -forgotPasswordToken -emailVefificationToken -forgotPasswordExpiry -emailVeficationExpiry")
         res.status(200).json(
             new apiResponse(200,"current user info",user)
         )
@@ -78,11 +83,11 @@ let getCurrentUser=asyncHandler(
 )
 
 let forgotPasswordRequest=asyncHandler(
-    async function () {
+    async function (req,res) {
         //getting email from user input
         let {email}=req.body
         let UserDoc=await User.findOne({email:email})
-        if(userDoc)
+        if(UserDoc)
         {
             let {tokenWithoutHash,tokenExpiry,hashedToken}=UserDoc.GenerateTokenWithoutData()
             UserDoc.forgotPasswordToken=hashedToken
@@ -112,7 +117,7 @@ let forgotPasswordRequest=asyncHandler(
 
 
 let resetPassword=asyncHandler(
-    async function (req) {
+    async function (req,res) {
         let resetToken=req.params.resetToken
         let {newPassword}=req.body
 
@@ -137,21 +142,21 @@ let resetPassword=asyncHandler(
 
 let changePassword=asyncHandler(
     async function (req,res) {
-        let usermiddlware=req.user._id
-        let userDoc=await User.findById({usermiddlware})
+        let usermiddlware=req.user
+        let id=usermiddlware._id
+        let userDoc=await User.findById(id)
         let {oldPassword,newPassword}=req.body
 
-     let isPasswordValid=UserDoc.passWordVerify(oldPassword)
+     let isPasswordValid=await userDoc.passWordVerify(oldPassword)
+     console.log("hello",isPasswordValid)
      if(!isPasswordValid)
      {
-        throw new apiError(404,
-            "the entered password is not correct"
-        )
+        throw new apiError(404,"the entered password is not correct")
      }
 
-     UserDoc.password=newPassword
-     await UserDoc.save({validateBeforeSave:false})
-     res.status("200").send("password changed")
+     userDoc.password=newPassword
+     await userDoc.save({validateBeforeSave:false})
+     res.status(200).send("password changed")
     }
 )
 
