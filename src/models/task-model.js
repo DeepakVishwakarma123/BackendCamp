@@ -9,7 +9,7 @@ const TaskSchema=new Schema(
             type:String,
             require:true
         },
-        ProjectName:{
+        Project:{
             type:Schema.Types.ObjectId,
             ref:"Project"
         },

@@ -9,11 +9,11 @@ const ProjectMemberSchema=new Schema(
              type:Schema.Types.ObjectId,
              ref:"User"
          },
-        ProjectName:{
+        Project:{
             type:Schema.Types.ObjectId,
             ref:"Project"
         },
-        Roles:{
+        Role:{
             type:String,
             enum:availableUserRoles,
             default:UserRolesEnum.Project_Admin
