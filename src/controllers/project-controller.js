@@ -32,7 +32,7 @@ let createProject=asyncHandler(
     res.status(201).json(
         new apiResponse(
             201,"Project Created",
-            createProject
+            createdProject
         )
     )
     }
@@ -90,5 +90,63 @@ let deleteProject=asyncHandler(
      }
 )
 
+
+//Add project member
+let addProjectMember=asyncHandler(
+    async function (req,res) {
+        
+    }
+)
+
+let ListProjectMember=asyncHandler(
+    async function (req,res)
+    {
+        let {projectId}=req.params
+        /*
+        we are gone writing an aggreation pipeline here to fetch all project member belonging to specfic project
+        */
+        let ProjectMemberDetails=ProjectMember.aggregate(
+            [
+                {
+                    $match:{
+                        "Project":projectId
+                    }
+                },
+
+                {
+               $lookup:{
+               from: "users",
+               localField:"user",
+               foreignField:"_id",
+               as: "userData"
+                }
+               },
+
+              {
+              $project: {
+            _id:0,
+             userData:1
+            }
+             }    
+            
+            ]
+
+        )
+
+        /*currently we are sending all user data like his other information as well
+          such as jwt token details his other things such as email,avatar url which we don,t need
+          at now because it alos increases payload size as well as it is not good 
+          approach when come to security flow!!! we do or update this thing in next day
+          but before do those activity we need to add another controller here such as
+          for adding usre as project member with definite role
+        */
+
+        res.status(200).json(
+            new apiResponse(200,"project member details are here",
+                ProjectMemberDetails
+            )
+        )
+  }
+)
 
 export {createProject,updateProject,deleteProject}
