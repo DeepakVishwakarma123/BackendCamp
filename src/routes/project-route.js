@@ -8,10 +8,12 @@ import adminCheckMiddleware from "../middleware/admin-middlware.js";
 
 const ProjectRouter=Router()
 
+
+
 //create Project
-ProjectRouter.route("/create",authMiddlware,createProject)
-ProjectRouter.route("/update",authMiddlware,adminCheckMiddleware,updateProject)
-ProjectRouter.route("/delete",authMiddlware,adminCheckMiddleware,deleteProject)
+ProjectRouter.route("/create").post(authMiddlware,createProject)
+ProjectRouter.route("/update/:projectid").put(authMiddlware,adminCheckMiddleware,updateProject)
+ProjectRouter.route("/delete:projectid").delete(authMiddlware,adminCheckMiddleware,deleteProject)
 
 
 export default ProjectRouter
