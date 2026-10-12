@@ -1,7 +1,6 @@
 import mongoose from "mongoose"
 import {Schema} from "mongoose"
-import { assign } from "nodemailer/lib/shared"
-import { availableUserRoles, UserRolesEnum } from "../utils/constants"
+import { availableUserRoles, UserRolesEnum } from "../utils/constants.js"
 
 const ProjectMemberSchema=new Schema(
     {
