@@ -31,11 +31,11 @@ let sendEmail=async (options) => {
     //here we use ethereal email for fake simulation not actual ones
   let mailTransPortObject=nodemailer.createTransport(
         {
-            host:"sandbox.smtp.mailtrap.io",
-            port:"25",
+            host:"",
+            port:"",
             auth:{
-                user:"dba4c2ce0add4c",
-                pass:"25f523db609b38"
+                user:"",
+                pass:""
             }
         }
     )
@@ -45,7 +45,7 @@ let sendEmail=async (options) => {
     try {
     let info=await mailTransPortObject.sendMail(
                          {
-                            from:"basecampy@gmail.com",
+                            from:"",
                             to:options.receiverEmailAddress,
                             subject:"hello",
                             text:mailGenTextContent,
@@ -53,9 +53,13 @@ let sendEmail=async (options) => {
                          }
         )
         console.log("mail sended succesfully");
+        //the 200number represetn that everything done succesfully as a value show we check in our side
+        return 200
      //   return Promise.resolve("mail sended succesfully")
         
     } catch (error) {
+        console.log(error);
+        
        return Promise.reject("error happend durign mail send utility")
         
     }
