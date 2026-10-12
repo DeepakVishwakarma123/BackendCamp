@@ -27,5 +27,28 @@ let emailContentBodyGenWithUrl=(emailBodyObject,emailLinkUrl)  => {
     return emailBodyContent
 }
 
+
+let inviteLinkContentMail=(projectData,AdminData,inviteData)  => {
+    
+    let emailBodyContent={
+        body:
+        {
+            name:projectData.projectName,
+            intro:`you are invited by ${AdminData.username}`,
+            action:{
+                instructions:projectData.Description,
+                button:{
+                    color:"#66429fff",
+                    text:`accept invitation`,
+                    link:`http://localhost:4001/api/v1/project/invitedMember/${inviteData._id}`
+                }
+            }
+        },
+        outro:"mail is sytem generated email"
+    }
+    return emailBodyContent
+}
+
 //the below function is used for generating email content and it return that object with holding values
 export default emailContentBodyGenWithUrl
+export {inviteLinkContentMail}
