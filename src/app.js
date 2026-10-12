@@ -40,7 +40,6 @@ import RegisterRouter from "./routes/register-route.js"
 import emailVerifyRouter from "./routes/email-verify-routes.js"
 import testValidateRouter from "./routes/test-validate-route.js"
 import dummyTestRouter from "./routes/dummy-routes..js"
-import xssRouter from "./routes/xss-route.js"
 import authRouter from "./routes/auth-route.js"
 import ProjectRouter from "./routes/project-route.js"
 
@@ -50,7 +49,6 @@ app.use("/api/v1/register",RegisterRouter)
 app.use("/api/v1/verify",emailVerifyRouter)
 app.use("/api/v1/testval",testValidateRouter)
 app.use("/api/v1/dummy",dummyTestRouter)
-app.use("/api/v1/xss",xssRouter)
 app.use("/api/v1/auth",authRouter)
 app.use("/api/v1/project",ProjectRouter)
 
