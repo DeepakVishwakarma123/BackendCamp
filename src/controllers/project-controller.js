@@ -5,7 +5,10 @@ import Project from "../models/projects-model.js";
 import mongoose from "mongoose"
 import ProjectMember from "../models/project-member.js";
 import { UserRolesEnum } from "../utils/constants.js";
-
+import InviteLink from "../models/invitelink-model.js";
+import User from "../models/user-model.js";
+import { inviteLinkContentMail } from "../utils/emailContentGenertionFunction.js";
+import sendEmail from "../utils/sendEmailUtility.js"
 
 // i can use try catch again and again that is okay for me
 
@@ -98,6 +101,81 @@ let addProjectMember=asyncHandler(
     }
 )
 
+
+//invite link Generator Controller
+let InviteLinkGenerateAndMail=asyncHandler(
+    async function(req,res)
+    {
+
+        //we get an email from request body
+        let {inviteEmailId,invitePersonRole}=req.body
+        let {ProjectId}=req.params
+
+        /*
+        issue no-1
+        fixing duplicate entry issues of again invitelink
+          creation the below code and condition fix this things
+          show the same email can not have two diffrent invite link
+          so hum check karnege ki jo email pe aap invite bhejna chahhte ho wah same project id
+          pe use hai ki nhi mera kehne ka matlab hai ki agar invite already send kiya hai
+          current project ke sath to dusra nhi bhej sakte hai diffrent project ke liye allowed hoga
+        */
+        //issue resolving code start from here
+        let isInviteLinkExist=await InviteLink.findOne({
+            invitedPersonEmail:inviteEmailId,
+            ProjectId
+        })
+
+        if(isInviteLinkExist)
+        {
+            res.status(409).json(
+                new apiResponse(409,"email already sent check spam and other folder to search for it")
+            )
+            return
+        }
+        //issue no-1 resolving code end here
+        /*
+        agar email aur link generate tab hoga agar project id diffrent hogi otherwise nhi
+        */
+
+        console.log("project id value now",ProjectId);
+        
+        //we should had to enter this thing in our database 
+        let InviteDocument=await InviteLink.create({
+            invitedPersonEmail:inviteEmailId,
+            invitePersonRole,
+            ProjectId
+        })
+
+        //searching for Project Details
+        let ProjectData=await Project.findById({_id:new mongoose.Types.ObjectId(ProjectId)})
+        console.log("Project Data is here",ProjectData);
+        console.log("Invite Document is Ready",InviteDocument);
+
+        //admin Basic Details
+        let userData=await User.findById({_id:ProjectData.CreatedBy}).select("-email -password -isEmailVerfied -refreshToken -forgotPasswordToken -emailVerficationToken")
+        
+        //there are might chances that InviteDocument can be empty or null
+        //we need to generate an link or you can say an mail template
+        //generating content for sending mail
+        let mailContent=inviteLinkContentMail(ProjectData,userData,InviteDocument)
+        let options={
+            mailContent,
+            receiverEmailAddress:inviteEmailId
+        }
+        let result=await sendEmail(options)
+        //yeh decision galat ho sakta hia kyonki main ek tarah se link ko kafi openly send kiy hai 
+        if(typeof(result)==="string")
+        {
+            res.status(503).json(new apiResponse(503,`email sending service is unavialable share this invite link to member you want to add, via email or other source here is link http://localhost:4001/api/v1/project/invitedMember/${InviteDocument._id}`))
+            return
+        }
+
+        res.status(200).json(new apiResponse(200,"invite link send successfully"))
+    }
+)
+
+
 let ListProjectMember=asyncHandler(
     async function (req,res)
     {
@@ -149,4 +227,4 @@ let ListProjectMember=asyncHandler(
   }
 )
 
-export {createProject,updateProject,deleteProject}
+export {createProject,updateProject,deleteProject,InviteLinkGenerateAndMail}
