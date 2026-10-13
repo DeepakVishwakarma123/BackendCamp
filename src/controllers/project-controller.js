@@ -167,7 +167,7 @@ let InviteLinkGenerateAndMail=asyncHandler(
         //yeh decision galat ho sakta hia kyonki main ek tarah se link ko kafi openly send kiy hai 
         if(typeof(result)==="string")
         {
-            res.status(503).json(new apiResponse(503,`email sending service is unavialable share this invite link to member you want to add, via email or other source here is link http://localhost:4001/api/v1/project/invitedMember/${InviteDocument._id}`))
+            res.status(503).json(new apiResponse(503,`email sending service is unavialable share this invite link to member you want to add, via email or other source here is link http://localhost:4001/api/v1/project/Verifyinvitedmember/${InviteDocument._id}`))
             return
         }
 
@@ -227,4 +227,34 @@ let ListProjectMember=asyncHandler(
   }
 )
 
-export {createProject,updateProject,deleteProject,InviteLinkGenerateAndMail}
+let addInvitedMemberToProject=asyncHandler(
+    async function (req,res) {
+        //extracting inviteLinkId value from request params
+        let {inviteLinkId}=req.params 
+        let invitedPersonDocument=await InviteLink.findById({_id:inviteLinkId})
+        let loginedUserEmailId=req.user.email 
+        let invitedPersonEmailId=invitedPersonDocument.invitedPersonEmail
+        let projectId=invitedPersonDocument.ProjectId
+        let invitedPersonRole=invitedPersonDocument.invitePersonRole
+        if(invitedPersonEmailId!=loginedUserEmailId)
+        {
+            res.status(401).json(
+                new apiResponse(401,"Unauthorized User,Use Valid Email Id")
+            )
+            return 
+        }
+        //if everything is okay such as emailid===inviteduseremailid
+        //create project member document with assciate role 
+        let AddedProjectMemberDocument=await ProjectMember.create({
+            user:new mongoose.Types.ObjectId(req.user._id),
+            Project:new mongoose.Types.ObjectId(projectId),
+            Role:invitedPersonRole
+        })
+
+        res.status(200).json(
+                new apiResponse(201,"Added member into Project",createProject)
+        )
+
+    }
+)
+export {createProject,updateProject,deleteProject,InviteLinkGenerateAndMail,addInvitedMemberToProject}
