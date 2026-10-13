@@ -40,7 +40,7 @@ let inviteLinkContentMail=(projectData,AdminData,inviteData)  => {
                 button:{
                     color:"#66429fff",
                     text:`accept invitation`,
-                    link:`http://localhost:4001/api/v1/project/invitedMember/${inviteData._id}`
+                    link:`http://localhost:4001/api/v1/project/Verifyinvitedmember/${inviteData._id}`
                 }
             }
         },
