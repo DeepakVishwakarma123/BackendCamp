@@ -9,6 +9,7 @@ import InviteLink from "../models/invitelink-model.js";
 import User from "../models/user-model.js";
 import { inviteLinkContentMail } from "../utils/emailContentGenertionFunction.js";
 import sendEmail from "../utils/sendEmailUtility.js"
+import { extractProjectDetails } from "../utils/Hooks.js";
 
 // i can use try catch again and again that is okay for me
 
@@ -257,4 +258,27 @@ let addInvitedMemberToProject=asyncHandler(
 
     }
 )
-export {createProject,updateProject,deleteProject,InviteLinkGenerateAndMail,addInvitedMemberToProject}
+
+let GetProjectDetails=asyncHandler(
+    async function (req,res) {
+        let userId=req.user._id
+        //extracting user role from api request endpoint
+        //for example
+        /*
+        get /project/admin
+            /project/project_admin
+            /project/member
+        */
+       let PersonRole=req.params
+       /*based on these three scenario we have to do something called finding project details
+         overall creating a function which gives us good work without wastign our or too much if else condition*/
+         /*
+         */
+        let ProjectDetails=await extractProjectDetails(PersonRole,userId)
+        res.status(200).json(
+            new apiResponse(200,`${PersonRole} as a Role All Projects`,ProjectDetails)
+        )
+        }
+)
+
+export {createProject,updateProject,deleteProject,InviteLinkGenerateAndMail,addInvitedMemberToProject,GetProjectDetails}
