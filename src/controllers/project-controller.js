@@ -327,6 +327,25 @@ let updateMemberRole=asyncHandler(
     }
 )
 
+let deleteProjectMember=asyncHandler(
+   async function (req,res) {
+        let projectId=req.params
+        let userId=req.params
+
+        //admin jaisa update karna and delete karna yeh thoda hume sochan padega to abhi ke liey hum admin ko ignore karege admin thoda controller ko update karenge kya decision le skate hai
+        let deletedMember=await ProjectMember.findOneAndDelete({
+            user:userId,
+            Project:projectId
+        })
+
+        res.status(200).json(
+            {
+                "message":"member removed from project successfully"
+            }
+        )
+   }
+)
+
 
 
 
