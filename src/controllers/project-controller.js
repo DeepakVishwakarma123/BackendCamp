@@ -351,4 +351,4 @@ let deleteProjectMember=asyncHandler(
 
 
 
-export {createProject,updateProject,deleteProject,InviteLinkGenerateAndMail,addInvitedMemberToProject,GetProjectDetails}
+export {createProject,updateProject,deleteProject,InviteLinkGenerateAndMail,addInvitedMemberToProject,GetProjectDetails,updateMemberRole,deleteProjectMember,ListProjectMember}
