@@ -95,12 +95,6 @@ let deleteProject=asyncHandler(
 )
 
 
-//Add project member
-let addProjectMember=asyncHandler(
-    async function (req,res) {
-        
-    }
-)
 
 
 //invite link Generator Controller
@@ -280,5 +274,60 @@ let GetProjectDetails=asyncHandler(
         )
         }
 )
+
+let updateMemberRole=asyncHandler(
+    async function (req,res) {
+        //update member role secured and admin only
+        //i will get project id and userid from frontend
+        //because previously i sended it as well,
+
+        let projectId=req.params
+        let userId=req.params
+        let {PersonRole}=req.body
+
+        //admin role updation deletion ka issue thoda fix karo 
+
+        if(PersonRole==="admin")
+        {
+            res.status(403).json(
+                new apiResponse(403,"admin role cannot be applied by admin there should be one admin in project")
+            )
+            return
+        }
+
+        /*
+        i am assuming here the frontend always send me
+        diffrent role for updating 
+        for example here
+        if a person current role is member show he can,t send us member again
+        instead of it will send us project_admin and viceversa
+        
+        what about admin role ---
+        if any admin wanted to delete his account
+        thenever he will assign a new admin 
+        there should always be one admin in project 
+        i have one person which i can add as owner so basically 
+        so owner has other person or current admin will become a member of project
+        bascially delete karna khud ko admin role se kisi aur role pe to 
+        us case pe hum kisi aur ko admin bana sakte hai
+        */
+    //   member aur project admin do role pe focus karte hai abhi 
+
+    let updatedRoleOfMemberDocument=await ProjectMember.findOneAndUpdate(
+        {user:userId,Project:projectId},
+        {$set:{Role:PersonRole}},
+        {new:true}
+    )
+
+    res.status(200).json(
+        {
+            "message":"Role Updated Successfully"
+        }
+    )
+    }
+)
+
+
+
 
 export {createProject,updateProject,deleteProject,InviteLinkGenerateAndMail,addInvitedMemberToProject,GetProjectDetails}
