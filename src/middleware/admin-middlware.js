@@ -1,13 +1,13 @@
 import asyncHandler from "../utils/async-handlers.js";
 import apiResponse from "../utils/api-response.js";
 import apiError from "../utils/api-error.js";
-import Project from "../models/projects-model.js";
+import ProjectMember from "../models/projects-member.js";
 import { UserRolesEnum } from "../utils/constants.js";
 
 let adminCheckMiddleware=asyncHandler(
     async function (req,res,next) {
         let userid=req["user"]["_id"]
-        let ProjectDocument=await Project.findById(
+        let ProjectDocument=await ProjectMember.findById(
             userid
         )
         if(ProjectDocument["Role"]===UserRolesEnum.ADMIN)
