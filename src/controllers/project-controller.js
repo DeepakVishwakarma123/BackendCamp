@@ -182,7 +182,8 @@ let ListProjectMember=asyncHandler(
             [
                 {
                     $match:{
-                        "Project":projectId
+                        "Project":projectId,
+                        "Role":{$in:["member","project_admin"]}
                     }
                 },
 
@@ -290,7 +291,7 @@ let updateMemberRole=asyncHandler(
         if(PersonRole==="admin")
         {
             res.status(403).json(
-                new apiResponse(403,"admin role cannot be applied by admin there should be one admin in project")
+                new apiResponse(403,"only one admin allowed in a project")
             )
             return
         }
@@ -332,6 +333,7 @@ let deleteProjectMember=asyncHandler(
         let projectId=req.params
         let userId=req.params
 
+        
         //admin jaisa update karna and delete karna yeh thoda hume sochan padega to abhi ke liey hum admin ko ignore karege admin thoda controller ko update karenge kya decision le skate hai
         let deletedMember=await ProjectMember.findOneAndDelete({
             user:userId,
