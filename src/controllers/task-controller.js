@@ -132,7 +132,69 @@ let GetProjectTask=asyncHandler(
     }
 )
 
+let GetTaskDetails=asyncHandler(
+    async function (req,res) {
+        let projectId=req.params
+        let userId=req.user._id
+        let taskId=req.params
 
+        // let ProjectMemberDocument=await ProjectMember.findById(
+        //     {
+        //         user:userId
+        //     }
+        // )
+
+        // let loggedInuserRole=ProjectMemberDocument["Role"]
+
+        // let matchingConditionObject={
+        //                 Project:projectId
+        //             }
+        //   if(loggedInuserRole==="member")
+        //  {
+        //     matchingConditionObject={
+        //         Project:projectId,
+        //         AssignTo:userId
+        //     }
+        //  }
+
+
+        //yaha pe humne mana hai ki jo task detail aap fetch kar rahe ho
+        //wo aapke role ke hissab se mili hui
+        /*
+            project task controller role ke hissab se data task ke send karta hai 
+            and jisse kya hota hai ki
+            admin ke pass admin level ke sare task dikhte hai 
+            and same for member and project admin
+
+            ab yaha pe hai kya ki bohot simple hai ki hume to pehle hi project ke task 
+            filter karke abhi hum un task ki details dekhna chahhte hai simple tarike 
+            se and woh hume mil jayega is query main ko i user id ki need nhi hia
+            kyonki taskid independed hai woh unqiue hoti hia and simple member ke pass uske task ki
+            list thi toh uski task id se usne use kar data dekh lega
+
+            agar hume task detial kuch restriciton rakhni hai then upwar wale code
+            ko chalukarke thoda sa tweak karke aggreatin pipeleine main aapkya karo
+            addproject operator us karke cheeze kam yaa kuan si filed woh handle kar satke ho
+        */
+
+
+        let ProjectTasks=Task.aggregate(
+            [
+                {
+                    $match:{
+                        "_id":taskId,
+                        "Project":projectId
+                    }
+                }
+            ]
+        )
+
+        res.status(200).json(
+            new apiResponse(200,"task fetched successfully",ProjectTasks)
+        )
+        
+    }
+)
 
 
 
