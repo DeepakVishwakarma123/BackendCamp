@@ -197,107 +197,32 @@ let GetTaskDetails=asyncHandler(
 )
 
 
-/*
-task update ,
-changing task to some other project
-might chances that assign by , assignto need to be change
 
----issue and bug notice
-Taskstatus can also be changed and controll by two or three diffretn person
-*/
 
-let updateTask=asyncHandler(
+
+let updateTaskMember=asyncHandler(
     async function(req,res){
         let {projectId,taskId}=req.params
-        let {AssignToPersonUserId,TaskStatus,Task}=req.body
+        let {AssignToPersonUserId}=req.body
         let updatingPersonId=req.user._id
-        /*
-        yeh jo update rule object hai 
-        yeh diffrent value lega and same ek hi query main pass hoga 
-        and jo bhi uske pass value hai usse base pe update kar dega just fine
-        aisa code kuch pichle route main likha hua hai toh wahe se chek kar skate ho kuch
-        hai nhi direct reference ka galat upyog 🤣 
-        */
-
-
-        /*
-        is rule ka simle mearnign hai ki jo person hai woh basically koi dusra hai jo task ke person ko change kar raha hai 
-        jasie projec admin ki jagah admin jisko task assign kiya hai usko change karta hai and viceversa
-        */
+        //agar jo person task assign kar raha hai woh alag hua us case ke liye yeh document main values update hogi
         let UpdateRuleObject={AssignBy:updatingPersonId,AssignTo:AssignToPersonUserId}
-
-
-          /*
-        task ko update maan lo nhi kar raha hai user toh Task hume body main milga nhi yaa
-        ho sakta hai empty value aaye
-        toh aise case main Task hume nhi milega to uski valu undefined rahegi us hissab se hum ek code likhenge jo ki
-        update object ke taru pe use hoga hamare findbyidandupdate ke set functon ke ander
-        */
-       /*
-        agar task undefined hai and taskstatus bhi iska sirf ek matlab hai ki samne
-        wala jo hai woh Assing To change karega ab yaha pe agar vo chnage kar raha hia 
-        to hume change karewala perosn old wala hi hai ki koi aur aa gya hai 
-        example yha pe hai ise tum future main code smjhne ke liye refer kar sakte ho
-        jaise ki 
-        task create kiya project admin rahul ne and usne assing kiya kriya
-        ko and toh taskdocument kuch asia bana 
-
-        taskid
-        task ka content jo bhi hai
-        task assign karne wale ki id jo ki yah pe rahul ki aayegi 
-        task karne wale ki id jo ki kriya ki aayegi yaha pe 
-        task status jo bhi yaha pe hoga
-
-        ab case dekho 2 cases hai and vicevers ho sakte hai 
-        ab rahul ko lagta hai ki kriya acha kaam nhi kar rahi hai toh usne us task
-        ko assign karna chhat hai siddhi ko 
-
-        toh hume upar rahul ki id to as it as rakhni hai per kirya ki jagah siddhi ki id rakhni hai
-        ab dusra case kya hai yaha pe ki admin ne kuch change s kiya toh dono update hogi  
-        assign karne wale main rahul ki jagah admin ki id aaygi and jisko bi usen updat main kiya hoga uski
-       */
-        
-        if(Task===undefined || TaskStatus===undefined)
-        {
-            /*
-             jab task undefind ho yaa taskstatus undefine ho toh yeh code chla chahiye but
-             agar aisa hia toh kya karoge ki task status change kar raha hai and sath main assing wala 
-             bhi kcuh aa rha hai yaa ulta ho sakt hai ki aapka task chan kar rah hai sath main taskstatus bhi and asisng bhi ya task and assingto sirf 
-             ab yehi cases bache hai inke liye thoda hume code ache se likhan padega
-             toh main idhar hi band karta huu isko plan kiye bina aage likh nhi sakte hia 
-             abhi k liey thik hai per isem ye kuch edge case hai yaa isse aur simple kar ssatek hai hum log kuch tarike se ab chlao dekhte hai kaise kya karna hai 
-            */
-        }
-
-
         // task id se task document pehle manga liya jisse kuch cheeze check kar sakte hai
-        let TaskDocument=await Task.findByIdAndUpdate( {_id:taskId} )
-
-        /*
-        agar id same hai toh project admin, yaa admin hi hoga jo dobare se 
-        assingTo person ko chnage kar raha hai dusra case neeche dekho
-        */
+        let TaskDocument=await Task.findById( {_id:taskId} )
+        //don,t update id of AssignByPerson in case of again he is updating things
         if(TaskDocument.AssignBy===updatingPersonId)
-        {
-            /*s case main document ko update karna hai per sirf AssingToId ko aur kuch nhi hai
-              hum idhar kuch nhi karengi neeche jo query hai usme ek object use hai jiski value by default kuch rahegi but 
-              hum usk value ko yaha pe is condition main update karnege apne hissabs se and 
-              agar condition match nhi hui toh diffrent wala case main upar default different wale code chal jayega koi dikkat nhi hai idhar
-            */
+        { 
            UpdateRuleObject={AssignTo:AssignToPersonUserId}
         }
+        //sending updated values
+        let TaskUpdatedDocument=Task.findByIdAndUpdate({_id:taskId},UpdateRuleObject,{new:true}).select("-Task -Project -TaskStatus")
+        res.status(200).json(new apiResponse(
+            200,"AssignedPerson Changed or Modified",TaskDocument
+        )) 
+       }
+    )
 
-        /*
-        agar upar wale condtion match nhi hogi toh yeh wala code automatically updateRule object main aayega
-        jiska meaing simple hai ki jo person  hai jo jisko task diya gya hai usko change kar raha hai woh pichli baar jisne task fist time bana tha woh nhi koi 
-        aur hai shayd se admin ki jagah project_admin hia yaa iska ulta ho sakta hai 
-        let UpdateRuleObject={AssignBy:updatingPersonId,AssignTo:AssignToPersonUserId}
-        */
-        let TaskUpdatedDocument=Task.findByIdAndUpdate({_id:taskId},UpdateRuleObject,{new:true})
 
-
-    }
-)
 
 
 
