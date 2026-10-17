@@ -5,6 +5,7 @@ import Task from "../models/task-model.js";
 import ProjectMember from "../models/project-member.js";
 import SubTask from "../models/subtask-model.js";
 import mongoose from "mongoose";
+import Note from "../models/notes-model.js";
 
 
 
@@ -233,6 +234,26 @@ let deleteSubTask=asynHandler(
         let {projectId,subTaskId}=req.params
         let deleteSubtaskDocument=SubTask.findOneAndDelete({_id:subTaskId})
         res.status(200).json(new apiResponse(200,"deleted Succesfully task"))
+    }
+)
+
+let createNote=asyncHandler(
+    async function (req,res) {
+        let {projectId}=req.params 
+        let {content}=req.body
+        let CreatedPersonId=req.user._id
+        let createdNote=Note.create(
+            {
+                content,
+                Project:projectId,
+                createdBy:CreatedPersonId
+            }
+        )
+        res.status(201).json(
+            new apiResponse(
+                201,"note created succcessfully",createdNote
+            )
+        )
     }
 )
 
