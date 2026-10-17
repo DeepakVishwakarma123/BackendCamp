@@ -228,7 +228,13 @@ let updateSubTask=asyncHandler(
 )
 
 
-
+let deleteSubTask=asynHandler(
+    async function (req,res) {
+        let {projectId,subTaskId}=req.params
+        let deleteSubtaskDocument=SubTask.findOneAndDelete({_id:subTaskId})
+        res.status(200).json(new apiResponse(200,"deleted Succesfully task"))
+    }
+)
 
 
 
