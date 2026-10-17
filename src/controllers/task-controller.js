@@ -177,6 +177,16 @@ let updateTaskContent=asynHandler(
     }
 )
 
+let deleteTask=asynHandler(
+    async function (req,res) {
+        let {projectId,taskId}=req.params
+        let deleteDocument=Task.findOneAndDelete({_id:taskId,Project:projectId})
+        res.status(200).json(new apiResponse(200,"deleted Succesfully task"))
+    }
+)
+
+
+
 
 
 
