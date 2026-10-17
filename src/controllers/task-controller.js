@@ -200,7 +200,7 @@ let GetTaskDetails=asyncHandler(
 
 
 
-let updateTaskMember=asyncHandler(
+let changeAssignToPerson=asyncHandler(
     async function(req,res){
         let {projectId,taskId}=req.params
         let {AssignToPersonUserId}=req.body
@@ -221,6 +221,47 @@ let updateTaskMember=asyncHandler(
         )) 
        }
     )
+
+
+
+//this controller update task and task status values only
+let updateTaskContent=asynHandler(
+    async function (req,res) {
+        let {projectId}=req.params
+        let {taskId}=req.params
+        let {task,TaskStatus}=req.body
+        //if request contains task,status then use this object to update both in task document
+        let updateRuleObject={task:task,TaskStatus}
+        if(TaskStatus===undefined)
+         {
+            //if status is not there update task only
+            updateRuleObject={task:task}
+         }else{
+            //if task not,update taskstatus
+            updateRuleObject={TaskStatus}
+         }
+        /*finding current userdetail*/
+        let ContentChangingUserData=req.user
+        let email=ContentChangingUserData.email 
+        let userName=ContentChangingUserData.username 
+        //this object is get sent via response alongside TaskUpdateDoc
+        let userDetail={email,userName}
+
+        let TaskUpdateDoc=Task.findByIdAndUpdate(
+            {_id:taskId},
+            updateRuleObject,
+            {new:true}
+        ).select("-Project -AssignBy -AssignTo -TaskStatus")
+
+        res.status(200).json(
+            new apiResponse(200,`task content updated by ${username}`,{
+                TaskUpdateDoc,userDetail
+            })
+        )
+    }
+)
+
+
 
 
 
