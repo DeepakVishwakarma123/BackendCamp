@@ -207,6 +207,29 @@ let createSubTask=asyncHandler(
 )
 
 
+let updateSubTask=asyncHandler(
+    async function(req,res)
+    {
+        let {projectId,subTaskId}=req.params
+        let {subtask}=req.body
+
+        let updatedSubtask=SubTask.findByIdAndUpdate(
+            {_id:subTaskId},
+            {
+                subtask
+            },
+            {new:true}
+        )
+
+        res.status(201).json(
+            new apiResponse(201,"subtask updated successfully",updatedSubtask)
+        )
+    }  
+)
+
+
+
+
 
 
 
