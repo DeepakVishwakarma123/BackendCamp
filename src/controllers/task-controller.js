@@ -3,6 +3,8 @@ import apiError from "../utils/api-error.js";
 import apiResponse from "../utils/api-response.js";
 import Task from "../models/task-model.js";
 import ProjectMember from "../models/project-member.js";
+import SubTask from "../models/subtask-model.js";
+import mongoose from "mongoose";
 
 
 
@@ -185,7 +187,24 @@ let deleteTask=asynHandler(
     }
 )
 
+let createSubTask=asyncHandler(
+    async function(req,res)
+    {
+        let {projectId,taskId}=req.params
+        let {subtask}=req.body
 
+        let createdSubtask=SubTask.create(
+            {
+                subtask,
+                Task:new mongoose.Types.ObjectId(taskId) 
+            }
+        )
+
+        res.status(201).json(
+            new apiResponse(201,"subtask created successfully",createdSubtask)
+        )
+    }  
+)
 
 
 
