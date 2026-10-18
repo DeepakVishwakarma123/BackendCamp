@@ -97,7 +97,7 @@ let GetTaskDetails=asyncHandler(
         neeche code main taskid jyda matter karti hai!!!
         */
         
-        let ProjectTasks=Task.aggregate(
+        let ProjectTasks=await Task.aggregate(
             [
                 {
                     $match:{
@@ -131,7 +131,7 @@ let changeAssignToPerson=asyncHandler(
            UpdateRuleObject={AssignTo:AssignToPersonUserId}
         }
         //sending updated values
-        let TaskUpdatedDocument=Task.findByIdAndUpdate({_id:taskId},UpdateRuleObject,{new:true}).select("-Task -Project -TaskStatus")
+        let TaskUpdatedDocument=await Task.findByIdAndUpdate({_id:taskId},UpdateRuleObject,{new:true}).select("-Task -Project -TaskStatus")
         res.status(200).json(new apiResponse(
             200,"AssignedPerson Changed or Modified",TaskDocument
         )) 
@@ -163,7 +163,7 @@ let updateTaskContent=asynHandler(
         //this object is get sent via response alongside TaskUpdateDoc
         let userDetail={email,userName}
 
-        let TaskUpdateDoc=Task.findByIdAndUpdate(
+        let TaskUpdateDoc=await Task.findByIdAndUpdate(
             {_id:taskId},
             updateRuleObject,
             {new:true}
@@ -180,7 +180,7 @@ let updateTaskContent=asynHandler(
 let deleteTask=asynHandler(
     async function (req,res) {
         let {projectId,taskId}=req.params
-        let deleteDocument=Task.findOneAndDelete({_id:taskId,Project:projectId})
+        let deleteDocument=await Task.findOneAndDelete({_id:taskId,Project:projectId})
         res.status(200).json(new apiResponse(200,"deleted Succesfully task"))
     }
 )
@@ -191,7 +191,7 @@ let createSubTask=asyncHandler(
         let {projectId,taskId}=req.params
         let {subtask}=req.body
 
-        let createdSubtask=SubTask.create(
+        let createdSubtask=await SubTask.create(
             {
                 subtask,
                 Task:new mongoose.Types.ObjectId(taskId) 
@@ -211,7 +211,7 @@ let updateSubTask=asyncHandler(
         let {projectId,subTaskId}=req.params
         let {subtask}=req.body
 
-        let updatedSubtask=SubTask.findByIdAndUpdate(
+        let updatedSubtask=await SubTask.findByIdAndUpdate(
             {_id:subTaskId},
             {
                 subtask
@@ -229,7 +229,7 @@ let updateSubTask=asyncHandler(
 let deleteSubTask=asynHandler(
     async function (req,res) {
         let {projectId,subTaskId}=req.params
-        let deleteSubtaskDocument=SubTask.findOneAndDelete({_id:subTaskId})
+        let deleteSubtaskDocument=await SubTask.findOneAndDelete({_id:subTaskId})
         res.status(200).json(new apiResponse(200,"deleted Succesfully task"))
     }
 )
@@ -239,7 +239,7 @@ let createNote=asyncHandler(
         let {projectId}=req.params 
         let {content}=req.body
         let CreatedPersonId=req.user._id
-        let createdNote=Note.create(
+        let createdNote=await Note.create(
             {
                 content,
                 Project:projectId,
@@ -259,7 +259,7 @@ let updateNote=asyncHandler(
         let {projectId,noteId}=req.params 
         let {content}=req.body
         //searching document by using above fields data
-        let updatedNoteDocument=Note.findOneAndUpdate(
+        let updatedNoteDocument=await Note.findOneAndUpdate(
             {_id:noteId,Project:projectId},
             {content},
             {new:true}
@@ -272,6 +272,7 @@ let updateNote=asyncHandler(
         )
     }
 )
+
 
 
 
