@@ -116,9 +116,6 @@ let GetTaskDetails=asyncHandler(
 )
 
 
-
-
-
 let changeAssignToPerson=asyncHandler(
     async function(req,res){
         let {projectId,taskId}=req.params
@@ -257,6 +254,24 @@ let createNote=asyncHandler(
     }
 )
 
+let updateNote=asyncHandler(
+    async function (req,res) {
+        let {projectId,noteId}=req.params 
+        let {content}=req.body
+        //searching document by using above fields data
+        let updatedNoteDocument=Note.findOneAndUpdate(
+            {_id:noteId,Project:projectId},
+            {content},
+            {new:true}
+        )
+
+        res.status(200).json(
+            new apiResponse(
+                200,"note updated",updatedNoteDocument
+            )
+        )
+    }
+)
 
 
 
