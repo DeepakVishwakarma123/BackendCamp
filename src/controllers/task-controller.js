@@ -273,7 +273,15 @@ let updateNote=asyncHandler(
     }
 )
 
-
+let deletedNote=asyncHandler(
+    async function (req,res) {
+        let {projectId,noteId}=req.params
+        let deletedDocument=await Note.findOneAndDelete({_id:noteId,Project:projectId})
+        res.status(200).json({
+            "message":"deleted note successfully!!!!!!"
+        })
+    }
+)
 
 
 
