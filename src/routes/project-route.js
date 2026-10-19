@@ -15,11 +15,11 @@ ProjectRouter.route("/create").post(authMiddlware,createProject)
 ProjectRouter.route("/update/:projectid").put(authMiddlware,adminCheckMiddleware,updateProject)
 ProjectRouter.route("/delete:projectid").delete(authMiddlware,adminCheckMiddleware,deleteProject)
 ProjectRouter.route("/Verifyinvitedmember/:inviteLinkId").post(authMiddlware,addInvitedMemberToProject)
-ProjectRouter.route("/sendinvitelink/:ProjectId").post(InviteLinkGenerateAndMail)
+ProjectRouter.route("/sendinvitelink/:ProjectId").post(authMiddlware,adminCheckMiddleware,InviteLinkGenerateAndMail)
 ProjectRouter.route("/ProjectDetails/:PersonRole").get(authMiddlware,GetProjectDetails)
 ProjectRouter.route("/update/:projectId/members/:userId").put(authMiddlware,adminCheckMiddleware,updateMemberRole)
 ProjectRouter.route("delete/:projectId/members/:userId"),delete(authMiddlware,adminCheckMiddleware,deleteProjectMember)
-ProjectRouter.route("/list/:projectId/members").get(ListProjectMember)
+ProjectRouter.route("/list/:projectId/members").get(authMiddlware,ListProjectMember)
 // http://localhost:4001/api/v1/project/invitedMember/${inviteData._id}
 export default ProjectRouter
 
