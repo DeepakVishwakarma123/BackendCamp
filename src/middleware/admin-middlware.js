@@ -1,7 +1,7 @@
 import asyncHandler from "../utils/async-handlers.js";
 import apiResponse from "../utils/api-response.js";
 import apiError from "../utils/api-error.js";
-import ProjectMember from "../models/projects-member.js";
+import ProjectMember from "../models/project-member.js";
 import { UserRolesEnum } from "../utils/constants.js";
 
 let adminCheckMiddleware=asyncHandler(
