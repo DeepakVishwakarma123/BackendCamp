@@ -42,7 +42,8 @@ import testValidateRouter from "./routes/test-validate-route.js"
 import dummyTestRouter from "./routes/dummy-routes..js"
 import authRouter from "./routes/auth-route.js"
 import ProjectRouter from "./routes/project-route.js"
-
+import TaskRouter from "./routes/task-route.js"
+import NoteRouter from "./routes/note-route.js"
 
 app.use("/api/v1/healthcheck",healthrouter)
 app.use("/api/v1/register",RegisterRouter)
@@ -51,6 +52,8 @@ app.use("/api/v1/testval",testValidateRouter)
 app.use("/api/v1/dummy",dummyTestRouter)
 app.use("/api/v1/auth",authRouter)
 app.use("/api/v1/project",ProjectRouter)
+app.use("/api/v1/task",TaskRouter)
+app.use("/api/v1/note",NoteRouter)
 
 app.get(
     "/",(req,res) => {
