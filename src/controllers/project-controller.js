@@ -15,7 +15,11 @@ import { extractProjectDetails } from "../utils/Hooks.js";
 
 let createProject=asyncHandler(
     async function (req,res,next) {
-        let {projectName,Description}=req.body
+        let {projectName,Description,t}=req.body
+        console.log("request body is right now inside project",req.body);
+        
+        console.log("unknowdndata",t);
+        
         // i can extract the user id as here user is login show i
         // have user id in the object itself 
     let createdProject=await Project.create(
