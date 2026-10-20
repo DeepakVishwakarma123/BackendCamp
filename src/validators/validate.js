@@ -69,7 +69,7 @@ function createProjectValidator(){
     ]
 }
 
-function UpdateProject()
+function UpdateProjectValidator()
 {
     return[
         body("Description").notEmpty().withMessage("project description is required").isLength(
@@ -78,6 +78,23 @@ function UpdateProject()
             "max character is allowed 250 only for project description"
         )
     ]
+}
+
+/*
+delete project validator kya karega check karega
+ exact id  length count kitna hai
+ mongodb ke jo object id ki max length 24 character hoti hai 
+*/
+function deleteProjectValidator()
+{
+return [
+    body("projectId").isLength({max:24}).withMessage(
+        "invalid project id passed valid project id here"
+    )
+    .isString().withMessage(
+        "project id format is incorrect"
+    ).trim()
+]
 }
 
 export {validate,loginValidate,passwordChange,userForgotPasswordValidator,userResetPasswordForgotValidator}
