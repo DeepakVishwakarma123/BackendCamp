@@ -134,5 +134,25 @@ function ProjectIdParamsValidator()
     ]
 }
 
+function InviteLinkIdParamsValidator()
+{
+    return [
+        params("inviteLinkId").trim().isLength(
+            {
+                min:24,
+                max:24
+            }
+        ).withMessage(
+            "invalid inviteLink forbidden request"
+        )
+    ]
+}
+
+
+
+
+
+
+
 
 export {validate,loginValidate,passwordChange,userForgotPasswordValidator,userResetPasswordForgotValidator}
