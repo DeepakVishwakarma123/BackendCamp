@@ -163,6 +163,31 @@ function GetProjectDetailsValidator()
     ]
 }
 
+function updateMemberRoleValidator()
+{
+    return [
+        // agar multiple same type ke data pe check karna hai toh ek hi ke ander likhe sakte ho jasie neeche array ke form main dono field ko ek hi chian se validate karna hai toh dono id hi overall
+        params(["projectId","userId"]).trim().isLength(
+            {
+                min:24,
+                max:24
+            }
+        ).withMessage(
+            "invalid id found not allowed provide value project id"
+        ).escape(),
+        body("PersonRole").trim().isIn(
+            [
+                "admin",
+                "project_admin",
+                "member"
+            ]
+        ).withMessage(
+            "not supported this role please pass valid role in request"
+        )
+
+    ]
+}
+
 
 
 
