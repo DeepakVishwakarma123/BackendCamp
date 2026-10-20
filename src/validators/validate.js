@@ -120,6 +120,19 @@ function InviteviaEmailValidator()
     ]
 }
 
+function ProjectIdParamsValidator()
+{
+    return [
+        params("projectId").trim().isLength(
+            {
+                min:24,
+                max:24
+            }
+        ).withMessage(
+            "invalid project id can not allowed"
+        )
+    ]
+}
 
 
 export {validate,loginValidate,passwordChange,userForgotPasswordValidator,userResetPasswordForgotValidator}
