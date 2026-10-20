@@ -1,4 +1,4 @@
-import { body } from "express-validator"
+import { body, param } from "express-validator"
 
 function validate()
 {
@@ -88,13 +88,38 @@ delete project validator kya karega check karega
 function deleteProjectValidator()
 {
 return [
-    body("projectId").isLength({max:24}).withMessage(
+    body("projectId").trim().isLength({min:24,max:24}).withMessage(
         "invalid project id passed valid project id here"
     )
     .isString().withMessage(
         "project id format is incorrect"
-    ).trim()
+    )
 ]
 }
+
+function InviteviaEmailValidator()
+{
+    return [
+        body("inviteEmailId").trim().isEmail().withMessage("provide valid email id--->invalid email id"),
+        //the invitePersonRole can be gone become three values such as admin,project_admin,member one of three show we use isIN to provide list to compare role which come in request against allowed role list
+        body("invitePersonRole").trim().isString().isIn(
+            [
+                "admin",
+                "project_admin",
+                "member"
+            ]
+        ).withMessage(
+            "invalid role found in request pass valid role"
+        ),
+        param("ProjectId").isLength(
+          {
+            min:24,
+            max:24
+          }
+        ).withMessage("invalid Project Id")
+    ]
+}
+
+
 
 export {validate,loginValidate,passwordChange,userForgotPasswordValidator,userResetPasswordForgotValidator}
