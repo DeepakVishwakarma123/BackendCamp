@@ -47,12 +47,36 @@ function userResetPasswordForgotValidator()
     ]
 }
 
+//limiting maxium number of character to avoid huge value of misrequest data
 function createProjectValidator(){
     return [
         body("projectName").notEmpty().withMessage(
             "projectName is required"
+        ).isLength(
+            {
+                max:140
+            }
+        ).withMessage(
+            "Project Name max charater is allowed only 100 limit reached"
         ),
-        body("Description").notEmpty().withMessage("project Description is required").escape()
+        body("Description").notEmpty().withMessage("project Description is required").escape().isLength(
+            {
+                max:250
+            }
+        ).withMessage(
+            "project description limit exceeded"
+        )
+    ]
+}
+
+function UpdateProject()
+{
+    return[
+        body("Description").notEmpty().withMessage("project description is required").isLength(
+            {max:250}
+        ).withMessage(
+            "max character is allowed 250 only for project description"
+        )
     ]
 }
 
