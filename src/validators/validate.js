@@ -50,7 +50,7 @@ function userResetPasswordForgotValidator()
 //limiting maxium number of character to avoid huge value of misrequest data
 function createProjectValidator(){
     return [
-        body("projectName").notEmpty().withMessage(
+        body("projectName").trim().notEmpty().withMessage(
             "projectName is required"
         ).isLength(
             {
@@ -59,7 +59,7 @@ function createProjectValidator(){
         ).withMessage(
             "Project Name max charater is allowed only 100 limit reached"
         ),
-        body("Description").notEmpty().withMessage("project Description is required").escape().isLength(
+        body("Description").trim().notEmpty().withMessage("project Description is required").escape().isLength(
             {
                 max:250
             }
@@ -72,7 +72,7 @@ function createProjectValidator(){
 function UpdateProjectValidator()
 {
     return[
-        body("Description").notEmpty().withMessage("project description is required").isLength(
+        body("Description").trim().notEmpty().withMessage("project description is required").isLength(
             {max:250}
         ).withMessage(
             "max character is allowed 250 only for project description"
@@ -111,7 +111,7 @@ function InviteviaEmailValidator()
         ).withMessage(
             "invalid role found in request pass valid role"
         ),
-        param("ProjectId").isLength(
+        param("ProjectId").trim().isLength(
           {
             min:24,
             max:24
@@ -144,6 +144,21 @@ function InviteLinkIdParamsValidator()
             }
         ).withMessage(
             "invalid inviteLink forbidden request"
+        )
+    ]
+}
+
+function GetProjectDetailsValidator()
+{
+    return [
+        params("PersonRole").trim().isIn(
+            [
+                "admin",
+                "project_admin",
+                "member"
+            ]
+        ).withMessage(
+            "invalid role not supported please provide value role to get project details"
         )
     ]
 }
