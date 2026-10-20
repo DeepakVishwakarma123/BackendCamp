@@ -47,4 +47,13 @@ function userResetPasswordForgotValidator()
     ]
 }
 
+function createProjectValidator(){
+    return [
+        body("projectName").notEmpty().withMessage(
+            "projectName is required"
+        ),
+        body("Description").notEmpty().withMessage("project Description is required").escape()
+    ]
+}
+
 export {validate,loginValidate,passwordChange,userForgotPasswordValidator,userResetPasswordForgotValidator}
