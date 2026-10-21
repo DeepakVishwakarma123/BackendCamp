@@ -209,4 +209,14 @@ function deleteProjectMemberValidator()
 
 
 
-export {validate,loginValidate,passwordChange,userForgotPasswordValidator,userResetPasswordForgotValidator}
+export {validate,loginValidate,passwordChange,userForgotPasswordValidator,userResetPasswordForgotValidator,
+    createProjectValidator,
+    updateMemberRoleValidator,
+    deleteProjectMemberValidator,
+    InviteLinkIdParamsValidator,
+    InviteviaEmailValidator,
+    ProjectIdParamsValidator,
+    GetProjectDetailsValidator,
+    UpdateProjectValidator,
+    deleteProjectValidator
+}
