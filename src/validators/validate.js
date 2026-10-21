@@ -188,6 +188,20 @@ function updateMemberRoleValidator()
     ]
 }
 
+function deleteProjectMemberValidator()
+{
+ return [
+      params(["projectId","userId"]).trim().isLength(
+            {
+                min:24,
+                max:24
+            }
+        ).withMessage(
+            "invalid id found not allowed provide value project id"
+        ).escape()
+ ]   
+}
+
 
 
 
