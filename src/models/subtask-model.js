@@ -1,6 +1,5 @@
 import mongoose from "mongoose"
 import {Schema} from "mongoose"
-import { assign } from "nodemailer/lib/shared"
 
 const SubTaskSchema=new Schema(
     {
