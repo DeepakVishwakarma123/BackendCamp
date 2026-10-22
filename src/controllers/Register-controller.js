@@ -67,35 +67,13 @@ let registerController=asyncHandler(
 
         // token generations for email verfication goes here
         let AllRequiredTokens=tokenGenerate(createdUser)
+        let userId=createdUser._id
         createdUser.emailVeficationExpiry=AllRequiredTokens.tokenExpiry
         createdUser.emailVefificationToken=AllRequiredTokens.hashedToken
-        console.log(createdUser);
-        
-
+    
         await createdUser.save({validateBeforeSave:false})
      
-        // we get outside from this function
-        // sending email for verfication with verfication token as well
-        let emailBodyObject={
-            username:username,
-            intro:"Welcome to the base Camp",
-            instructions:"For complete Verfication click on below link",
-            text:"verify email",
-            outro:"this is system generated email do not reply it"
-        }
-
-        // creating and passing a email verify route here
-        let emailVerfiyUrl=`${req.protocol}://${req.get("host")}/api/v1/verify/${AllRequiredTokens.tokenWithoutHash}/${createdUser._id}`
-
-        // generate email 
-        let emailContentWithBodyData=emailContentBodyGenWithUrl(emailBodyObject,emailVerfiyUrl)
-
-        // sending mail
-        let response= await sendEmail({mailContent:emailContentWithBodyData,receiverEmailAddress:email},emailVerfiyUrl)
-
-        // sending created users as a response
-        // this ensure only sensitive data not get sended to frontend
-                let hidingCreateUserData=await User.findById(createdUser._id).select(
+        let hidingCreateUserData=await User.findById(userId).select(
                 "-password -emailVefificationToken -refreshToken  -forgotPasswordToken -forgotPasswordExpiry -emailVeficationExpiry -avatar"
             )
 
@@ -104,14 +82,29 @@ let registerController=asyncHandler(
                 throw new apiError(500,"something went wrong")
 
             }
+            GenerateMailData(username,AllRequiredTokens,userId,email)
             res.status(201).json(
                 new apiResponse(200,"created user succesfully",{createdUser:hidingCreateUserData}) 
             )
-        
-        
-
     }
 )
+
+async function GenerateMailData(username,AllRequiredTokens,userId,email)
+{
+    console.log("hello from generate mail data is here");
+    
+      let emailBodyObject={
+            username:username,
+            intro:"Welcome to the base Camp",
+            instructions:"For complete Verfication click on below link",
+            text:"verify email",
+            outro:"this is system generated email do not reply it"
+        }
+        let emailVerfiyUrl="helloyesbrokyakaruabbolomainhuu"
+    //    let emailVerfiyUrl=`${req.protocol}://${req.get("host")}/api/v1/verify/${AllRequiredTokens.tokenWithoutHash}/${userId}`
+       let emailContentWithBodyData=emailContentBodyGenWithUrl(emailBodyObject,emailVerfiyUrl)
+       let response= await sendEmail({mailContent:emailContentWithBodyData,receiverEmailAddress:email},emailVerfiyUrl)
+}
 
 
 
