@@ -141,7 +141,7 @@ let changeAssignToPerson=asyncHandler(
 
 
 //this controller update task and task status values only
-let updateTaskContent=asynHandler(
+let updateTaskContent=asyncHandler(
     async function (req,res) {
         let {projectId}=req.params
         let {taskId}=req.params
@@ -177,7 +177,7 @@ let updateTaskContent=asynHandler(
     }
 )
 
-let deleteTask=asynHandler(
+let deleteTask=asyncHandler(
     async function (req,res) {
         let {projectId,taskId}=req.params
         let deleteDocument=await Task.findOneAndDelete({_id:taskId,Project:projectId})
@@ -226,7 +226,7 @@ let updateSubTask=asyncHandler(
 )
 
 
-let deleteSubTask=asynHandler(
+let deleteSubTask=asyncHandler(
     async function (req,res) {
         let {projectId,subTaskId}=req.params
         let deleteSubtaskDocument=await SubTask.findOneAndDelete({_id:subTaskId})
