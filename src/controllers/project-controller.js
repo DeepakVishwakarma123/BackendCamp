@@ -251,6 +251,15 @@ let addInvitedMemberToProject=asyncHandler(
         //extracting inviteLinkId value from request params
         let {inviteLinkId}=req.params 
         let invitedPersonDocument=await InviteLink.findById({_id:inviteLinkId})
+
+         //adding check
+         if(invitedPersonDocument===null)
+         {
+            return res.status(404).json(
+                new apiResponse(404,"invalid invite link")
+            )
+         }
+
         let loginedUserEmailId=req.user.email 
         let invitedPersonEmailId=invitedPersonDocument.invitedPersonEmail
         let projectId=invitedPersonDocument.ProjectId
@@ -270,6 +279,13 @@ let addInvitedMemberToProject=asyncHandler(
             Role:invitedPersonRole
         })
 
+        //deleting invitelink document--for reducing risk of again entries if any one visit route again
+        let deletingInviteLinkDoc=await InviteLink.findByIdAndDelete(inviteLinkId)
+
+        /*
+        one case is here if during the deletion process some error occured and delete is not get doning yet
+        there show how much time you wait and what about it get deleted or not think of it
+        */
         res.status(200).json(
                 new apiResponse(201,"Added member into Project",createProject)
         )
