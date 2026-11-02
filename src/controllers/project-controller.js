@@ -196,43 +196,48 @@ let ListProjectMember=asyncHandler(
         /*
         we are gone writing an aggreation pipeline here to fetch all project member belonging to specfic project
         */
+
+        // 6ad2f4d390650f6cf7142e50
         let ProjectMemberDetails=ProjectMember.aggregate(
-            [
-                {
-                    $match:{
-                        "Project":projectId,
-                        "Role":{$in:["member","project_admin"]}
-                    }
-                },
+           [
+        {    
+        $match: {
+        "Project":new mongoose.Types.ObjectId(projectId),
+        "Role":{
+         $in:["member","project_admin"]
+             }
+               }
+        },
+        {
+    $lookup: {
+      from:"users",
+      localField: "user",
+      foreignField: "_id",
+      as: "result",
+    }
+        },
+        {
+    $addFields: {
+      userData: {
+        $arrayElemAt:["$result",0]
+      }
+    }
+       },
+//there is one addition field is which is _id is known as member id
+       {
+    $project: {
+      "userData._id":1,
+      "userData.username":1,
+      "userData.email":1,
+      "userData.avatar":1,
+      "Project":1,
+      "Role":1
+       }
+       }
+ ]
+)
 
-                {
-               $lookup:{
-               from: "users",
-               localField:"user",
-               foreignField:"_id",
-               as: "userData"
-                }
-               },
-
-              {
-              $project: {
-            _id:0,
-             userData:1
-            }
-             }    
-            
-            ]
-
-        )
-
-        /*currently we are sending all user data like his other information as well
-          such as jwt token details his other things such as email,avatar url which we don,t need
-          at now because it alos increases payload size as well as it is not good 
-          approach when come to security flow!!! we do or update this thing in next day
-          but before do those activity we need to add another controller here such as
-          for adding usre as project member with definite role
-        */
-
+//aggregation result is array in this case!!!
         res.status(200).json(
             new apiResponse(200,"project member details are here",
                 ProjectMemberDetails
