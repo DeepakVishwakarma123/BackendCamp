@@ -51,6 +51,7 @@ let updateProject=asyncHandler(
     async function (req,res,next) {
         let {Description}=req.body
         let {projectId}=req.params
+
         //we have project member document which has project id  we use it to find the doc and upate it
       let UpdatedProject=await Project.findByIdAndUpdate(
             projectId,
@@ -179,6 +180,19 @@ let ListProjectMember=asyncHandler(
     async function (req,res)
     {
         let {projectId}=req.params
+
+        //searching weather project is exist or not to avoid unnecessar aggreation query 
+        let ProjectDocument=await Project.findById(
+            projectId
+        )
+
+        if(ProjectDocument===null)
+        {
+            return res.status(404).json(
+                new apiResponse(404,"Project Not found")
+            )
+        }
+        //agar project rahega toh hum aggregatin pipleine code chalega otherwise nhi
         /*
         we are gone writing an aggreation pipeline here to fetch all project member belonging to specfic project
         */
