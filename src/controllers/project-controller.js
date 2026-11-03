@@ -107,6 +107,10 @@ let InviteLinkGenerateAndMail=asyncHandler(
         let {inviteEmailId,invitePersonRole}=req.body
         let {ProjectId}=req.params
 
+        /*
+        below check is important it secure our system show we can not proceed random project id while creating 
+        inviteLink document
+        */
         let isProjectExist=await Project.findById(ProjectId)
 
         if(isProjectExist===null)
@@ -403,10 +407,42 @@ let deleteProjectMember=asyncHandler(
    }
 )
 
+let listUserProject=asyncHandler(
+    async function (req,res) {
+
+        //after verification of authmiddleware we get user id 
+        let userId=req.user._id
+        //show user project such as where he is admin,project_admin,or playing as member role 
+        //we are goign to use aggregation pipeline to write it however this is i am following instructor code for this controller 
+        let userProjectsArrays=ProjectMember.aggregate(
+            [
+                //first we search all ProjectMember doc assocaited with our user id 
+               {
+                 $match:{
+                    user:userId
+                }
+               },
+               {
+                $lookup:{
+                    from:"Project",
+                    localField:"Project",
+                    foreignField:"_id",
+                    as:"UserProjects"
+                }
+               }
+            ]
+        )    
+        
+        res.status(200).json(
+            new apiResponse(200,"All Projects Fetched Successfully!!!")
+        )
+    }
+)
 
 
 
-export {createProject,updateProject,deleteProject,InviteLinkGenerateAndMail,addInvitedMemberToProject,GetProjectDetails,updateMemberRole,deleteProjectMember,ListProjectMember}
+
+export {listUserProject,createProject,updateProject,deleteProject,InviteLinkGenerateAndMail,addInvitedMemberToProject,GetProjectDetails,updateMemberRole,deleteProjectMember,ListProjectMember}
 
 
 
