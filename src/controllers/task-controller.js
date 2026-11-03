@@ -43,11 +43,21 @@ let GetProjectTask=asyncHandler(
         let projectId=req.params
         let userId=req.user._id
 
+        //project hai ki nhi check add karte nhi rahta hai to problem ho jayega
+        let ProjectDoc=await Project.findById(projectId)
+        if(ProjectDoc===null){
+            return res.status(404).json(
+                new apiResponse(404,"Project Not found")
+            )
+        }
+
         /*
         role find karo--admin,project amdin hai toh sidha project id ka use  karke saer task retrive kar liye
         agar member hai toh uska bhi id liya and AssingTo ke ander to jo task use assing hai woh nial liye bus 
         itna hi hai idhar
         */
+
+        
 
         let ProjectMemberDocument=await ProjectMember.findById(
             {
