@@ -344,6 +344,15 @@ let updateMemberRole=asyncHandler(
     }
    )
 
+   let userRoleSavedIndatabase=userProjectMemberDoc.Role
+
+   if(userRoleSavedIndatabase===PersonRole)
+   {
+    return res.status(404).json(
+        new apiResponse(404,"please provide value role for updated")
+    )
+   }
+
    if(userProjectMemberDoc===null)
    {
     return res.status(404).json(
