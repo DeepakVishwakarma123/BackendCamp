@@ -59,9 +59,10 @@ let GetProjectTask=asyncHandler(
 
         
 
-        let ProjectMemberDocument=await ProjectMember.findById(
+        let ProjectMemberDocument=await ProjectMember.findOne(
             {
-                user:userId
+                user:userId,
+                Project:projectId
             }
         )
 
