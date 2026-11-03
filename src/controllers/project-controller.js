@@ -335,23 +335,21 @@ let updateMemberRole=asyncHandler(
             return
         }
 
-        /*
-        i am assuming here the frontend always send me
-        diffrent role for updating 
-        for example here
-        if a person current role is member show he can,t send us member again
-        instead of it will send us project_admin and viceversa
-        
-        what about admin role ---
-        if any admin wanted to delete his account
-        thenever he will assign a new admin 
-        there should always be one admin in project 
-        i have one person which i can add as owner so basically 
-        so owner has other person or current admin will become a member of project
-        bascially delete karna khud ko admin role se kisi aur role pe to 
-        us case pe hum kisi aur ko admin bana sakte hai
-        */
-    //   member aur project admin do role pe focus karte hai abhi 
+
+
+   let userProjectMemberDoc=await ProjectMember.findOne(
+    {
+        user:userId,
+        Project:projectId
+    }
+   )
+
+   if(userProjectMemberDoc===null)
+   {
+    return res.status(404).json(
+        new apiResponse(404,"failed to update member role due to invalid crdentials")
+    )
+   }
 
     let updatedRoleOfMemberDocument=await ProjectMember.findOneAndUpdate(
         {user:userId,Project:projectId},
